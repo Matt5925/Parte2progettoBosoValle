@@ -59,7 +59,7 @@ public class Main {
 
 				break;
 			}
-
+//skibidi
 			case 4: {
 				String durata = "";
 				String rischio = "";
