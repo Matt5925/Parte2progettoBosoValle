@@ -5,6 +5,8 @@
 package GestioneBanca;
 
 public class Utente {
+	private String userName;
+	private String password;
 	private Portafoglio portafoglio;
 	private ContoBancario contoBancario;
 	private Investimento[] investimenti;
@@ -12,7 +14,9 @@ public class Utente {
 	private final double sommaMensile = 100;
 	private int meseCorrente = 1;
 
-	public Utente() {
+	public Utente(String userName,String password) {
+		this.userName=userName;
+		this.password=password;
 		this.portafoglio = new Portafoglio();
 		this.contoBancario = new ContoBancario();
 		this.investimenti = new Investimento[10];

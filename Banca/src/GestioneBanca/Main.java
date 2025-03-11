@@ -9,10 +9,69 @@ import java.util.Scanner;
 public class Main {
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
-		Utente utente = new Utente();
+		gestioneUtenti gest=new gestioneUtenti();
 		int scelta;
 
+
+
+
+
+		System.out.print("1) Accedi\n");
+		System.out.print("2) Registrati\n");
+		int sceltaAccesso;
+		sceltaAccesso = inserisciIntero();
+
+
+		while (sceltaAccesso != 2 && sceltaAccesso != 1) {
+			System.out.println("\nERRORE! ");
+			System.out.print("SCEGLI --> ");
+			sceltaAccesso = inserisciIntero();
+		}
+
+
+
+	switch(sceltaAccesso){
+
+
+//accedi
+		case 1:{
+
+			// Logica per il login utente
+			System.out.print("Inserisci nome utente: ");
+			String userName = scanner.next();
+			System.out.print("\nInserisci Password: ");
+			String password = scanner.next();
+
+			// Verifica il login
+			if (GestoreFile.verificaLogin(userName, password)) {
+				System.out.println("Login riuscito! Benvenuto, " + userName + "!");
+			} else {
+				System.out.println("Nome utente o password errati.");
+			}
+			break;
+		}
+
+//registra
+		case 2:{
+
+			System.out.print("Inserisci nome utente: ");
+			String userName=scanner.next();
+			System.out.print("\nInserisci Password: ");
+			String password=scanner.next();
+
+			GestoreFile.salvaUtente(userName,password);
+
+
+			Utente u=new Utente(userName,password);
+			gest.push(u);
+			break;
+		}
+	}
+
+    Utente utente = null;
+
 		do {
+
 			menu(utente.getMeseCorrente());
 			System.out.print("\nSCEGLI --> ");
 			scelta = inserisciIntero();
