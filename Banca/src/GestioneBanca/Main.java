@@ -9,24 +9,24 @@ import java.util.Scanner;
 public class Main {
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
-		gestioneUtenti gest=new gestioneUtenti();
+
 		int scelta;
 
 
+		Utente utente=null;
+	boolean accessoRiuscito =false;
+do{
+	System.out.print("1) Accedi\n");
+	System.out.print("2) Registrati\n");
+	int sceltaAccesso;
+	sceltaAccesso = inserisciIntero();
 
 
-
-		System.out.print("1) Accedi\n");
-		System.out.print("2) Registrati\n");
-		int sceltaAccesso;
+	while (sceltaAccesso != 2 && sceltaAccesso != 1) {
+		System.out.println("\nERRORE! ");
+		System.out.print("SCEGLI --> ");
 		sceltaAccesso = inserisciIntero();
-
-
-		while (sceltaAccesso != 2 && sceltaAccesso != 1) {
-			System.out.println("\nERRORE! ");
-			System.out.print("SCEGLI --> ");
-			sceltaAccesso = inserisciIntero();
-		}
+	}
 
 
 
@@ -45,6 +45,8 @@ public class Main {
 			// Verifica il login
 			if (GestoreFile.verificaLogin(userName, password)) {
 				System.out.println("Login riuscito! Benvenuto, " + userName + "!");
+				accessoRiuscito=true;
+				utente=new Utente(userName,password);
 			} else {
 				System.out.println("Nome utente o password errati.");
 			}
@@ -58,17 +60,19 @@ public class Main {
 			String userName=scanner.next();
 			System.out.print("\nInserisci Password: ");
 			String password=scanner.next();
-
+			accessoRiuscito=true;
 			GestoreFile.salvaUtente(userName,password);
+			utente=new Utente(userName,password);
 
 
-			Utente u=new Utente(userName,password);
-			gest.push(u);
+
 			break;
 		}
 	}
+}while(!accessoRiuscito);
 
-    Utente utente = null;
+
+
 
 		do {
 
@@ -118,7 +122,7 @@ public class Main {
 
 				break;
 			}
-//skibidi
+
 			case 4: {
 				String durata = "";
 				String rischio = "";

@@ -62,7 +62,8 @@ public class GestoreFile {
         }
     }
 
-    public static boolean verificaLogin(String username, String password) {
+    public static boolean verificaLogin(String username, String password ) {
+
         File fileUtente = new File(PATH_CARTELLA_UTENTI + username + ".txt");
 
         // Verifica se il file dell'utente esiste
