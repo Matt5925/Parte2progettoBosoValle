@@ -3,6 +3,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 
 public class Gui {
     private JFrame frame;
@@ -28,18 +29,25 @@ public class Gui {
     private JPanel creaPannelloAccesso() {
         JPanel panel = new JPanel(new GridLayout(3, 2));
 
-        JLabel userLabel = new JLabel("Nome utente:");
+        JLabel userLabel = new JLabel("             Nome utente:");
         JTextField userField = new JTextField();
-        JLabel passLabel = new JLabel("Password:");
+        JLabel passLabel = new JLabel("             Password:");
         JPasswordField passField = new JPasswordField();
         JButton loginButton = new JButton("Accedi");
+        loginButton.setBackground(Color.CYAN);
+        loginButton.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                loginButton.setBackground(new Color(41, 128, 185)); // Blu più scuro
+            }
+        });
         JButton registerButton = new JButton("Registrati");
+        registerButton.setBackground(Color.CYAN);
 
         loginButton.addActionListener(e -> {
             String user = userField.getText();
             String pass = new String(passField.getPassword());
             if (GestoreFile.verificaLogin(user, pass)) {
-                JOptionPane.showMessageDialog(frame, "Login riuscito!");
+                JOptionPane.showMessageDialog(frame, "Accesso riuscito! \uD83D\uDE01");
                 cardLayout.show(mainPanel, "Menu");
             } else {
                 JOptionPane.showMessageDialog(frame, "Nome utente o password errati.", "Errore", JOptionPane.ERROR_MESSAGE);
@@ -64,7 +72,7 @@ public class Gui {
     }
 
     private JPanel creaPannelloMenu() {
-        JPanel panel = new JPanel(new GridLayout(6, 1));
+        JPanel panel = new JPanel(new GridLayout(3, 2));
         JButton btnAvanzaMese = new JButton("Avanzare di un mese");
         JButton btnDeposita = new JButton("Depositare soldi in banca");
         JButton btnPreleva = new JButton("Prelevare soldi dalla banca");
