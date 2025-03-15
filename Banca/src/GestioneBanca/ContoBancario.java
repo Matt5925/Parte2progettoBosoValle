@@ -7,8 +7,15 @@ package GestioneBanca;
 public class ContoBancario {
 	private double saldo;
 
-	public ContoBancario() {
-		this.saldo = 0.0;
+	public ContoBancario(double saldo) {
+		this.saldo = saldo;
+	}
+
+
+	public String tostring(){
+		String s="";
+		s+=this.saldo;
+		return s;
 	}
 
 	public double getSaldo() {

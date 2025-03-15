@@ -1,7 +1,8 @@
 package GestioneBanca;
 import javax.swing.*;
 import java.io.*;
-
+import java.util.List;
+import java.util.ArrayList;
 
 
 
@@ -10,52 +11,53 @@ public class GestoreFile {
     private static final String PATH_CARTELLA_UTENTI = "fileUtenti/"; // Cartella dove vengono salvati i file utente
     private static File cartellaUtenti = new File(PATH_CARTELLA_UTENTI);
 
-    //private static final String PATH_CARTELLA_UTENTI = "fileUtenti/";
-    //private static final String PATH_CARTELLA_REGISTRO = "registroTransazioni/";
-    //private static final String PATH_REGISTRO = PATH_CARTELLA_REGISTRO + "registro.txt";
-    //private static File registroTransazioni = new File(PATH_REGISTRO);
-   // private static File cartellaUtenti = new File(PATH_CARTELLA_UTENTI);
-/*
-    public static void salvaTransazione(String username, String data, String transazione) {
 
-        File cartella = new File(PATH_CARTELLA_REGISTRO);
-        if (!cartella.exists()) {
-            cartella.mkdirs();
-        }
-
-        if (!registroTransazioni.exists()) {
-            try {
-                registroTransazioni.createNewFile();
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "Errore nella creazione del registro!", "Errore", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-        }
+    public static void salvaAggiornamenti(Utente utente) {
+        // Crea il file dell'utente con il nome "username.txt"
+        File fileUtente = new File(PATH_CARTELLA_UTENTI + utente.getUsername() + ".txt");
 
         try {
-            FileWriter writer = new FileWriter(registroTransazioni, true);
-            writer.write(username + " | " + data + "\n");
-            writer.write(transazione);
-            writer.write("\n\n");
-            writer.close();
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Errore nel salvataggio della transazione", "Errore", JOptionPane.WARNING_MESSAGE);
-        }
-    }*/
+            // Usa FileWriter per sovrascrivere il file
+            FileWriter writer = new FileWriter(fileUtente);
 
-    public static void salvaUtente(String username, String password) {
+            // Scrivi i dati dell'utente nel file, ogni dato su una riga separata
+            writer.write(utente.getUsername() + "\n");
+            writer.write(utente.getPassword() + "\n");
+            writer.write(utente.getPortafoglio().tostring() + "\n");
+            writer.write(utente.getContoBancario().tostring() + "\n");
+/*
+
+*/
+            // Chiudi il file
+            writer.close();
+
+
+            System.out.println("Dati dell'utente aggiornati correttamente nel file.");
+        } catch (IOException e) {
+            System.out.println("Errore durante il salvataggio dei dati dell'utente.");
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+    public static void salvaNuovoUtente(Utente utente) {
         // Verifica se la cartella esiste, se non esiste la crea
         if (!cartellaUtenti.exists()) {
             cartellaUtenti.mkdirs(); // Crea la cartella se non esiste
         }
 
         try {
-            // Crea il file dell'utente con il nome username.txt
-            File fileUtente = new File(PATH_CARTELLA_UTENTI + username + ".txt");
+      // Crea il file dell'utente con il nome username.txt
+      File fileUtente = new File(PATH_CARTELLA_UTENTI + utente.getUsername() + ".txt");
             // Se il file non esiste, lo crea e scrive i dati
             FileWriter writer = new FileWriter(fileUtente);
-            writer.write(username + "\n");
-            writer.write(password + "\n"); // Scrivi anche la password (nota: in un'applicazione reale, dovresti criptarla)
+            writer.write(utente.getUsername() + "\n");
+            writer.write(utente.getPassword()+ "\n"); // Scrivi anche la password (nota: in un'applicazione reale, dovresti criptarla)
+            writer.write(utente.getPortafoglio().tostring() + "\n");
+            writer.write(utente.getContoBancario().tostring() +"\n");
+          //  writer.write(utente.stampaInvestimenti() +";");
             writer.close();
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Errore nel salvataggio dei dati dell'utente.", "Errore", JOptionPane.WARNING_MESSAGE);
@@ -72,6 +74,7 @@ public class GestoreFile {
         }
 
         try {
+
             // Leggi i dati dal file
             BufferedReader reader = new BufferedReader(new FileReader(fileUtente));
             String nome = reader.readLine(); // Legge il nome utente
@@ -87,4 +90,54 @@ public class GestoreFile {
             return false;
         }
     }
+
+    public static Utente recuperaUtente(String username){
+
+        File fileUtente = new File(PATH_CARTELLA_UTENTI + username + ".txt");
+
+        String usernameUtente = "";
+        String passwordUtente = "";
+        Portafoglio portafoglioUtente = null;
+        ContoBancario contoBancarioUtente = null;
+        List<Investimento> investimentiUtente = new ArrayList<>();
+
+        if (!fileUtente.exists()) {
+            return null;  // L'utente non esiste
+        }
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileUtente));
+
+
+            // Leggi la prima riga e salva i dati dell'utente
+
+
+                usernameUtente =reader.readLine();
+                passwordUtente = reader.readLine();
+                portafoglioUtente = new Portafoglio((Double.parseDouble(reader.readLine())));
+                contoBancarioUtente = new ContoBancario(Double.parseDouble(reader.readLine()));
+
+                // Carica la lista degli investimenti
+               /* if (dati.length > 4) {
+                    investimentiUtente = Utente.caricaInvestimenti(dati[4]);
+                }*/
+
+
+            reader.close();
+
+            // Crea l'oggetto Utente con i dati letti
+            return new Utente(usernameUtente, passwordUtente, portafoglioUtente, contoBancarioUtente/*investimentiUtente*/);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;  // In caso di errore nella lettura del file
+        }
+
+
+
+        // Crea l'oggetto Utente con i dati letti
+        //return new Utente(usernameUtente, passwordUtente, portafoglioUtente, contoBancarioUtente /*investimentiUtente*/);
+
+    }
+
 }

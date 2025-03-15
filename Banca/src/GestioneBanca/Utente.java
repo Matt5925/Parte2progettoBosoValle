@@ -14,13 +14,13 @@ public class Utente {
 	private final double sommaMensile = 100;
 	private int meseCorrente = 1;
 
-	public Utente(String userName,String password) {
+	public Utente(String userName,String password,Portafoglio portafoglio,ContoBancario contoBancario/*Investimento[] investimenti*/) {
 		this.userName=userName;
 		this.password=password;
-		this.portafoglio = new Portafoglio();
-		this.contoBancario = new ContoBancario();
-		this.investimenti = new Investimento[10];
-		this.numeroInvestimenti = 0;
+		this.portafoglio = portafoglio;
+		this.contoBancario = contoBancario;
+		//this.investimenti =investimenti;
+		//this.numeroInvestimenti = 0;
 	}
 
 	public Portafoglio getPortafoglio() {
@@ -88,4 +88,20 @@ public class Utente {
 	public int getMeseCorrente() {
 		return meseCorrente;
 	}
+	public String getUsername(){
+		return this.userName;
+	}
+
+	public String getPassword(){
+		return this.password;
+	}
+	/*public String stampaInvestimenti(){
+		String s="";
+		for (int i=0;i<investimenti.length;i++){
+			if(investimenti[i]!=null){
+				s+=investimenti[i].toString();
+			}
+		}
+		return s;
+	}*/
 }

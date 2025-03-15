@@ -38,15 +38,16 @@ do{
 
 			// Logica per il login utente
 			System.out.print("Inserisci nome utente: ");
-			String userName = scanner.next();
+			String userName = scanner.nextLine();
 			System.out.print("\nInserisci Password: ");
-			String password = scanner.next();
+			String password = scanner.nextLine();
 
 			// Verifica il login
 			if (GestoreFile.verificaLogin(userName, password)) {
+
 				System.out.println("Login riuscito! Benvenuto, " + userName + "!");
 				accessoRiuscito=true;
-				utente=new Utente(userName,password);
+				utente=GestoreFile.recuperaUtente(userName);
 			} else {
 				System.out.println("Nome utente o password errati.");
 			}
@@ -61,9 +62,9 @@ do{
 			System.out.print("\nInserisci Password: ");
 			String password=scanner.next();
 			accessoRiuscito=true;
-			GestoreFile.salvaUtente(userName,password);
-			utente=new Utente(userName,password);
 
+			utente=new Utente(userName,password, new Portafoglio(100.0),new ContoBancario(0.0)/*new Investimento[]{}*/);
+			GestoreFile.salvaNuovoUtente(utente);
 
 
 			break;
@@ -104,6 +105,7 @@ do{
 				} else {
 					System.out.println("Soldi insufficienti nel portafoglio.");
 				}
+				GestoreFile.salvaAggiornamenti(utente);
 
 				break;
 			}
@@ -119,7 +121,7 @@ do{
 				} else {
 					System.out.println("Soldi insufficienti nel conto bancario.");
 				}
-
+				GestoreFile.salvaAggiornamenti(utente);
 				break;
 			}
 

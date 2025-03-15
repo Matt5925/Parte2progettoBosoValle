@@ -7,8 +7,14 @@ package GestioneBanca;
 public class Portafoglio {
 	private double saldo;
 
-	public Portafoglio() {
-		this.saldo = 100;
+	public Portafoglio(Double saldo) {
+		this.saldo = saldo;
+	}
+
+	public String tostring(){
+		String s="";
+		s+=this.saldo;
+		return s;
 	}
 
 	public double getSaldo() {

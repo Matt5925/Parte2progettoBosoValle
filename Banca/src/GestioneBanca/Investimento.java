@@ -76,6 +76,10 @@ public class Investimento {
 		return 0;
 	}
 
+	public int getMesiRimanenti(){
+		return this.mesiRimanenti;
+	}
+
 	@Override
 	public String toString() {
 		return "Investimento di " + importo + "€, mesi rimanenti: " + mesiRimanenti + ", tasso di guadagno: "

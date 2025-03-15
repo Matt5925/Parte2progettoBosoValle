@@ -49,7 +49,7 @@ public class Gui {
         registerButton.addActionListener(e -> {
             String user = userField.getText();
             String pass = new String(passField.getPassword());
-            GestoreFile.salvaUtente(user, pass);
+            //GestoreFile.salvaUtente();
             JOptionPane.showMessageDialog(frame, "Registrazione completata!");
         });
 
