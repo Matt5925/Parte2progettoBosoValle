@@ -1,0 +1,6 @@
+burato
+gay
+3
+200.0
+80.0
+20.0,Basso,Medio;
