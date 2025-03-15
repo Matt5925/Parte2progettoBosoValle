@@ -3,24 +3,30 @@
  * @version 1.0
  */
 package GestioneBanca;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Utente {
 	private String userName;
 	private String password;
 	private Portafoglio portafoglio;
 	private ContoBancario contoBancario;
-	private Investimento[] investimenti;
-	private int numeroInvestimenti;
+	private List<Investimento> investimenti;
+
 	private final double sommaMensile = 100;
 	private int meseCorrente = 1;
 
-	public Utente(String userName,String password,Portafoglio portafoglio,ContoBancario contoBancario/*Investimento[] investimenti*/) {
+	public Utente(String userName,String password,int meseCorrente,Portafoglio portafoglio,ContoBancario contoBancario,Investimento[] investimenti) {
 		this.userName=userName;
 		this.password=password;
 		this.portafoglio = portafoglio;
 		this.contoBancario = contoBancario;
-		//this.investimenti =investimenti;
-		//this.numeroInvestimenti = 0;
+		this.investimenti = new ArrayList<>();
+		this.meseCorrente=meseCorrente;
+	}
+
+	public List<Investimento> getInvestimenti() {
+		return investimenti;
 	}
 
 	public Portafoglio getPortafoglio() {
@@ -36,50 +42,43 @@ public class Utente {
 		portafoglio.aggiungiDenaro(sommaMensile);
 		meseCorrente += 1;
 
-		for (int i = 0; i < numeroInvestimenti; i++) {
-			investimenti[i].aggiornaInvestimento();
-			if (investimenti[i].completato()) {
-				double guadagno = investimenti[i].calcolaGuadagno();
+		for (int i = 0; i < investimenti.size(); i++) {
+			Investimento investimento = investimenti.get(i);
+			investimento.aggiornaInvestimento();
+			if (investimento.completato()) {
+				double guadagno = investimento.calcolaGuadagno();
 				contoBancario.deposita(guadagno);
-				rimuoviInvestimento(i);
+				investimenti.remove(i); // Rimuoviamo l'investimento completato
 				i--;
 				completati = true;
+
 			}
 		}
 		return completati;
 	}
 
 	public boolean aggiungiInvestimento(double importo, String durata, String rischio) {
-		if (numeroInvestimenti >= investimenti.length) {
-			return false;
-		}
+
 
 		if (!contoBancario.preleva(importo)) {
 			return false;
 		}
 
 		Investimento nuovoInvestimento = new Investimento(importo, durata, rischio);
-		investimenti[numeroInvestimenti] = nuovoInvestimento;
-		numeroInvestimenti++;
+		investimenti.add(nuovoInvestimento);
+
 		return true;
 	}
 
-	private void rimuoviInvestimento(int index) {
-		for (int i = index; i < numeroInvestimenti - 1; i++) {
-			investimenti[i] = investimenti[i + 1];
-		}
-		investimenti[numeroInvestimenti - 1] = null;
-		numeroInvestimenti--;
 
-	}
 
 	public String getStato() {
 		String stato = "Portafoglio: " + portafoglio.getSaldo() + "€\n";
 		stato += "Conto bancario: " + contoBancario.getSaldo() + "€\n";
 		stato += "Investimenti:\n";
 
-		for (int i = 0; i < numeroInvestimenti; i++) {
-			stato += investimenti[i].toString() + "\n";
+		for (int i = 0; i < investimenti.size(); i++) {
+			stato += investimenti.get(i).toString() + "\n";
 		}
 
 		return stato;
@@ -95,13 +94,15 @@ public class Utente {
 	public String getPassword(){
 		return this.password;
 	}
-	/*public String stampaInvestimenti(){
+	public String stampaInvestimenti(){
 		String s="";
-		for (int i=0;i<investimenti.length;i++){
-			if(investimenti[i]!=null){
-				s+=investimenti[i].toString();
+		for (int i=0;i<investimenti.size();i++){
+			if(investimenti.get(i)!=null){
+				s+=investimenti.get(i).toString();
 			}
 		}
 		return s;
-	}*/
+	}
+
+
 }

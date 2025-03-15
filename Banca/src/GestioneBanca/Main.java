@@ -63,7 +63,7 @@ do{
 			String password=scanner.next();
 			accessoRiuscito=true;
 
-			utente=new Utente(userName,password, new Portafoglio(100.0),new ContoBancario(0.0)/*new Investimento[]{}*/);
+			utente=new Utente(userName,password,1, new Portafoglio(100.0),new ContoBancario(0.0),new Investimento[]{});
 			GestoreFile.salvaNuovoUtente(utente);
 
 
@@ -92,6 +92,7 @@ do{
 				if (utente.avanzareMese()) {
 					System.out.println("\nATTENZIONE degli Investimenti sono stati completati");
 				}
+				GestoreFile.salvaAggiornamenti(utente);
 				break;
 			}
 
@@ -174,7 +175,7 @@ do{
 				} else {
 					System.out.println("Non e' possibile aggiungere L'Investimento");
 				}
-
+				GestoreFile.salvaAggiornamenti(utente);
 				break;
 			}
 

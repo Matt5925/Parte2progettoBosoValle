@@ -9,12 +9,16 @@ public class Investimento {
 	private int mesiRimanenti;
 	private double tassoGuadagno;
 	private boolean completato;
+	private String rischio;
+	private String durata;
 
 	public Investimento(double importo, String durata, String rischio) {
 		this.importo = importo;
 		this.mesiRimanenti = determinaDurata(durata);
 		this.tassoGuadagno = determinaGuadagno(durata, rischio);
 		this.completato = false;
+		this.rischio=rischio;
+		this.durata=durata;
 	}
 
 	private int determinaDurata(String durata) {
@@ -54,6 +58,18 @@ public class Investimento {
 
 	}
 
+	public double getImporto(){
+		return this.importo;
+	}
+
+	public String getDurata(){
+		return this.durata;
+	}
+	public String getRischio(){
+		return this.rischio;
+	}
+
+
 	public void aggiornaInvestimento() {
 		if (completato) {
 			return;
@@ -76,9 +92,7 @@ public class Investimento {
 		return 0;
 	}
 
-	public int getMesiRimanenti(){
-		return this.mesiRimanenti;
-	}
+
 
 	@Override
 	public String toString() {
