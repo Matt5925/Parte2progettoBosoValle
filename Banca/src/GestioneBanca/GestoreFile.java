@@ -123,7 +123,7 @@ public class GestoreFile {
 
             // Leggi gli investimenti
             String investimentiString = reader.readLine();
-            System.out.println("Investimenti letti dal file: " + investimentiString); // Aggiungi log per debugging
+            //System.out.println("Investimenti letti dal file: " + investimentiString); // Aggiungi log per debugging
             if (investimentiString != null && !investimentiString.trim().isEmpty()) {
                 // Separiamo gli investimenti usando un delimitatore ";"
                 String[] investimentiArray = investimentiString.split(";");
@@ -131,6 +131,7 @@ public class GestoreFile {
                     if (!investimentoStr.trim().isEmpty()) {
                         String[] investimentoDetails = investimentoStr.split(",");
                         if (investimentoDetails.length == 3) {
+
                             try {
                                 // Parsing dei dettagli dell'investimento
                                 double importo = Double.parseDouble(investimentoDetails[0].trim());
@@ -140,7 +141,7 @@ public class GestoreFile {
                                 // Aggiungiamo l'investimento alla lista
                                 Investimento investimento = new Investimento(importo, durata, rischio);
                                 investimentiUtente.add(investimento);
-                                System.out.println("Investimento creato: " + investimento.toString()); // Log per il singolo investimento
+                                System.out.println("Investimento ripreso: " + investimento.toString()); // Log per il singolo investimento
                             } catch (NumberFormatException e) {
                                 System.out.println("Errore nel formato dell'investimento: " + investimentoStr);
                             }
@@ -154,7 +155,7 @@ public class GestoreFile {
             reader.close();
 
             // Crea l'oggetto Utente con i dati letti
-            return new Utente(usernameUtente, passwordUtente, meseCorrente, portafoglioUtente, contoBancarioUtente, investimentiUtente.toArray(new Investimento[0]));
+            return new Utente(usernameUtente, passwordUtente, meseCorrente, portafoglioUtente, contoBancarioUtente, investimentiUtente);
 
         } catch (IOException e) {
             e.printStackTrace();

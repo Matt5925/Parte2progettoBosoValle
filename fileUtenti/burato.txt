@@ -1,6 +1,6 @@
 burato
 gay
-3
-200.0
-80.0
-20.0,Basso,Medio;
+7
+600.0
+50.0
+20.0,basso,basso;10.0,medio,medio;

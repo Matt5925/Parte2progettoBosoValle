@@ -16,12 +16,12 @@ public class Utente {
 	private final double sommaMensile = 100;
 	private int meseCorrente = 1;
 
-	public Utente(String userName,String password,int meseCorrente,Portafoglio portafoglio,ContoBancario contoBancario,Investimento[] investimenti) {
+	public Utente(String userName,String password,int meseCorrente,Portafoglio portafoglio,ContoBancario contoBancario,List investimenti) {
 		this.userName=userName;
 		this.password=password;
 		this.portafoglio = portafoglio;
 		this.contoBancario = contoBancario;
-		this.investimenti = new ArrayList<>();
+		this.investimenti = investimenti;
 		this.meseCorrente=meseCorrente;
 	}
 

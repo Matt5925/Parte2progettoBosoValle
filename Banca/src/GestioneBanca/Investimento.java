@@ -33,6 +33,9 @@ public class Investimento {
 		return mesi;
 	}
 
+	public boolean completato(){
+		return completato;
+	}
 	private double determinaGuadagno(String durata, String rischio) {
 		double guadagno;
 
@@ -81,9 +84,7 @@ public class Investimento {
 		}
 	}
 
-	public boolean completato() {
-		return completato;
-	}
+
 
 	public double calcolaGuadagno() {
 		if (completato) {

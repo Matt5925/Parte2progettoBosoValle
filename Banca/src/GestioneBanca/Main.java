@@ -4,6 +4,8 @@
  */
 package GestioneBanca;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -63,7 +65,7 @@ do{
 			String password=scanner.next();
 			accessoRiuscito=true;
 
-			utente=new Utente(userName,password,1, new Portafoglio(100.0),new ContoBancario(0.0),new Investimento[]{});
+			utente=new Utente(userName,password,1, new Portafoglio(100.0),new ContoBancario(0.0), new ArrayList<Investimento>());
 			GestoreFile.salvaNuovoUtente(utente);
 
 
