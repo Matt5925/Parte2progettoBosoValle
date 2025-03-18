@@ -37,9 +37,14 @@ public class Utente {
 		return contoBancario;
 	}
 
-	public boolean avanzareMese() {
+	public boolean avanzareMese(Utente utente) {
 		boolean completati = false;
 		portafoglio.aggiungiDenaro(sommaMensile);
+
+		Transazione t =new Transazione("Banca","Portafoglio",sommaMensile);
+
+		GestoreFile.salvaTransazione(t,utente);
+
 		meseCorrente += 1;
 
 		for (int i = 0; i < investimenti.size(); i++) {
@@ -48,6 +53,9 @@ public class Utente {
 			if (investimento.completato()) {
 				double guadagno = investimento.calcolaGuadagno();
 				contoBancario.deposita(guadagno);
+
+				Transazione t1 =new Transazione("BancaInvestimenti","ContoBancario",guadagno);
+				GestoreFile.salvaTransazione(t1,utente);
 				investimenti.remove(i); // Rimuoviamo l'investimento completato
 				i--;
 				completati = true;
@@ -57,14 +65,15 @@ public class Utente {
 		return completati;
 	}
 
-	public boolean aggiungiInvestimento(double importo, String durata, String rischio) {
+	public boolean aggiungiInvestimento(double importo, String durata, String rischio, int mesi,Utente utente) {
 
 
 		if (!contoBancario.preleva(importo)) {
 			return false;
 		}
-
-		Investimento nuovoInvestimento = new Investimento(importo, durata, rischio);
+		Transazione t=new Transazione("ContoBancario","BancaInvestimenti",importo);
+		GestoreFile.salvaTransazione(t,utente);
+		Investimento nuovoInvestimento = new Investimento(importo, durata, rischio, mesi);
 		investimenti.add(nuovoInvestimento);
 
 		return true;

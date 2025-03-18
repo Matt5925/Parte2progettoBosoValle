@@ -1,6 +1,0 @@
-burato
-gay
-7
-600.0
-50.0
-20.0,basso,basso;10.0,medio,medio;

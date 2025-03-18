@@ -83,7 +83,7 @@ do{
 			System.out.print("\nSCEGLI --> ");
 			scelta = inserisciIntero();
 
-			while (scelta > 5 || scelta < 0) {
+			while (scelta > 6 || scelta < 0) {
 				System.out.println("\nERRORE! ");
 				System.out.print("SCEGLI --> ");
 				scelta = inserisciIntero();
@@ -91,7 +91,7 @@ do{
 
 			switch (scelta) {
 			case 1: {
-				if (utente.avanzareMese()) {
+				if (utente.avanzareMese(utente)) {
 					System.out.println("\nATTENZIONE degli Investimenti sono stati completati");
 				}
 				GestoreFile.salvaAggiornamenti(utente);
@@ -105,6 +105,10 @@ do{
 				if (utente.getPortafoglio().prelevaDenaro(depositaImporto)) {
 					utente.getContoBancario().deposita(depositaImporto);
 					System.out.println("Hai depositato " + depositaImporto + "€.");
+
+					Transazione t= new Transazione("portafoglio","contoBancario",depositaImporto);
+					GestoreFile.salvaTransazione(t,utente);
+
 				} else {
 					System.out.println("Soldi insufficienti nel portafoglio.");
 				}
@@ -121,6 +125,9 @@ do{
 				if (utente.getContoBancario().preleva(prelievaImporto)) {
 					utente.getPortafoglio().aggiungiDenaro(prelievaImporto);
 					System.out.println("Hai prelevato " + prelievaImporto + "€.");
+
+					Transazione t= new Transazione("contoBancario","portafoglio",prelievaImporto );
+					GestoreFile.salvaTransazione(t,utente);
 				} else {
 					System.out.println("Soldi insufficienti nel conto bancario.");
 				}
@@ -131,7 +138,9 @@ do{
 			case 4: {
 				String durata = "";
 				String rischio = "";
+				int mesi=0;
 				double importo = 0;
+
 				boolean ok;
 
 				do {
@@ -140,6 +149,10 @@ do{
 					durata = scanner.next().trim();
 					if (durata.equalsIgnoreCase("Basso") || durata.equalsIgnoreCase("Medio")
 							|| durata.equalsIgnoreCase("Alto")) {
+						if (durata.equalsIgnoreCase("Basso")){mesi=3;}
+						if (durata.equalsIgnoreCase("Medio")){mesi=6;}
+						if (durata.equalsIgnoreCase("Alto")){mesi=6;}
+
 					} else {
 						System.out.println("Durata non valida. Inserisci 'Basso', 'Medio' o 'Alto'.");
 						ok = false;
@@ -172,7 +185,7 @@ do{
 
 				} while (!ok);
 
-				if (utente.aggiungiInvestimento(importo, durata, rischio)) {
+				if (utente.aggiungiInvestimento(importo, durata, rischio,mesi,utente)) {
 					System.out.println("Investimento aggiunto");
 				} else {
 					System.out.println("Non e' possibile aggiungere L'Investimento");
@@ -183,6 +196,10 @@ do{
 
 			case 5: {
 				System.out.println(utente.getStato());
+				break;
+			}
+			case 6: {
+				GestoreFile.stampaTransazioni(utente);
 				break;
 			}
 
@@ -209,6 +226,7 @@ do{
 		System.out.println("3. Prelevare soldi dalla banca");
 		System.out.println("4. Aggiungere un nuovo investimento");
 		System.out.println("5. Stato conto, portafoglio e investimenti");
+		System.out.println("6. Vedi Transazioni");
 		System.out.println("\n0. Uscire");
 	}
 

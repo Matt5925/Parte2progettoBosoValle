@@ -29,7 +29,7 @@ public class GestoreFile {
 
             for (int i = 0; i < utente.getInvestimenti().size(); i++) {
                 Investimento investimento = utente.getInvestimenti().get(i);
-                writer.write(investimento.getImporto() + "," + investimento.getDurata() + "," + investimento.getRischio() + ";");
+                writer.write(investimento.getImporto() + "," + investimento.getDurata() + "," + investimento.getRischio() + ","+ investimento.getMesiRimanenti()+";");
             }
 
             writer.write("\n");
@@ -46,6 +46,39 @@ public class GestoreFile {
     }
 
 
+    public static void salvaTransazione(Transazione t, Utente utente){
+        File fileUtente = new File(PATH_CARTELLA_UTENTI + utente.getUsername() + "Transazioni.txt");
+        try {
+            // Usa FileWriter con il parametro 'true' per scrivere in modalità append
+            FileWriter writer = new FileWriter(fileUtente, true); // Aggiungi 'true' per appendere
+
+            writer.write(t.toString() + "\n"); // Aggiungi una nuova riga dopo ogni transazione
+
+            // Chiudi il file
+            writer.close();
+
+            System.out.println("Dati dell'utente aggiornati correttamente nel file.");
+        } catch (IOException e) {
+            System.out.println("Errore durante il salvataggio dei dati dell'utente.");
+            e.printStackTrace();
+        }
+    }
+
+    public static void stampaTransazioni(Utente utente) {
+        File fileUtente = new File(PATH_CARTELLA_UTENTI + utente.getUsername() + "Transazioni.txt");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileUtente))) {
+            String linea;
+
+            // Leggi ogni riga del file e stampala
+            while ((linea = reader.readLine()) != null) {
+                System.out.println(linea);
+            }
+        } catch (IOException e) {
+            System.out.println("Errore durante la lettura del file delle transazioni.");
+            e.printStackTrace();
+        }
+    }
 
 
     public static void salvaNuovoUtente(Utente utente) {
@@ -130,16 +163,16 @@ public class GestoreFile {
                 for (String investimentoStr : investimentiArray) {
                     if (!investimentoStr.trim().isEmpty()) {
                         String[] investimentoDetails = investimentoStr.split(",");
-                        if (investimentoDetails.length == 3) {
+                        if (investimentoDetails.length == 4) {
 
                             try {
                                 // Parsing dei dettagli dell'investimento
                                 double importo = Double.parseDouble(investimentoDetails[0].trim());
                                 String durata = investimentoDetails[1].trim();
                                 String rischio = investimentoDetails[2].trim();
-
+                                int mesi=Integer.parseInt(investimentoDetails[3].trim());
                                 // Aggiungiamo l'investimento alla lista
-                                Investimento investimento = new Investimento(importo, durata, rischio);
+                                Investimento investimento = new Investimento(importo, durata, rischio,mesi);
                                 investimentiUtente.add(investimento);
                                 System.out.println("Investimento ripreso: " + investimento.toString()); // Log per il singolo investimento
                             } catch (NumberFormatException e) {

@@ -12,26 +12,16 @@ public class Investimento {
 	private String rischio;
 	private String durata;
 
-	public Investimento(double importo, String durata, String rischio) {
+	public Investimento(double importo, String durata, String rischio,int mesiRimanenti) {
 		this.importo = importo;
-		this.mesiRimanenti = determinaDurata(durata);
+		this.mesiRimanenti = mesiRimanenti;
 		this.tassoGuadagno = determinaGuadagno(durata, rischio);
 		this.completato = false;
 		this.rischio=rischio;
 		this.durata=durata;
 	}
 
-	private int determinaDurata(String durata) {
-		int mesi = 0;
-		if (durata.equalsIgnoreCase("Basso")) {
-			mesi = 3;
-		} else if (durata.equalsIgnoreCase("Medio")) {
-			mesi = 6;
-		} else {
-			mesi = 12;
-		}
-		return mesi;
-	}
+
 
 	public boolean completato(){
 		return completato;
@@ -61,7 +51,11 @@ public class Investimento {
 
 	}
 
+	public int getMesiRimanenti(){
+		return this.mesiRimanenti;
+	}
 	public double getImporto(){
+
 		return this.importo;
 	}
 
