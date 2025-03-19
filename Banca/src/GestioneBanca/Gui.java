@@ -1,188 +1,229 @@
 package GestioneBanca;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.util.ArrayList;
 
-public class Gui {
+public class Gui extends JFrame {
     private JFrame frame;
-    private CardLayout cardLayout;
-    private JPanel mainPanel;
-
-    public Gui() {
-        frame = new JFrame("Gestione Banca");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300);
-        frame.setLocationRelativeTo(null);
-
-        cardLayout = new CardLayout();
-        mainPanel = new JPanel(cardLayout);
-
-        mainPanel.add(creaPannelloAccesso(), "Login");
-        mainPanel.add(creaPannelloMenu(), "Menu");
-
-        frame.add(mainPanel);
-        frame.setVisible(true);
-    }
-
-    private JPanel creaPannelloAccesso() {
-        JPanel panel = new JPanel(new GridLayout(3, 2));
-
-        JLabel userLabel = new JLabel("             Nome utente:");
-        JTextField userField = new JTextField();
-        JLabel passLabel = new JLabel("             Password:");
-        JPasswordField passField = new JPasswordField();
-        JButton loginButton = new JButton("Accedi");
-        loginButton.setBackground(Color.WHITE);
-        loginButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                loginButton.setBackground(new Color(239, 239, 239)); // Blu più chiaro
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                loginButton.setBackground(Color.WHITE); // Torna al colore originale
-            }
-        });
-        JButton registerButton = new JButton("Registrati");
-        registerButton.setBackground(Color.WHITE);
-        registerButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                registerButton.setBackground(new Color(239, 239, 239)); // Blu più chiaro
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                registerButton.setBackground(Color.WHITE); // Torna al colore originale
-            }
-        });
-
-        loginButton.addActionListener(e -> {
-            String user = userField.getText();
-            String pass = new String(passField.getPassword());
-            if (GestoreFile.verificaLogin(user, pass)) {
-                JOptionPane.showMessageDialog(frame, "Accesso riuscito! \uD83D\uDE01");
-                cardLayout.show(mainPanel, "Menu");
-            } else {
-                JOptionPane.showMessageDialog(frame, "Nome utente o password errati.", "Errore", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-
-        registerButton.addActionListener(e -> {
-            String user = userField.getText();
-            String pass = new String(passField.getPassword());
-            //GestoreFile.salvaUtente();
-            JOptionPane.showMessageDialog(frame, "Registrazione completata!");
-        });
-
-        panel.add(userLabel);
-        panel.add(userField);
-        panel.add(passLabel);
-        panel.add(passField);
-        panel.add(loginButton);
-        panel.add(registerButton);
-
-        return panel;
-    }
-
-    private JPanel creaPannelloMenu() {
-        JPanel panel = new JPanel(new GridLayout(3, 2));
-        JButton btnAvanzaMese = new JButton("Avanzare di un mese");
-        btnAvanzaMese.setBackground(Color.WHITE);
-        btnAvanzaMese.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                btnAvanzaMese.setBackground(new Color(239, 239, 239)); // Blu più chiaro
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                btnAvanzaMese.setBackground(Color.WHITE); // Torna al colore originale
-            }
-        });
-        JButton btnDeposita = new JButton("Depositare soldi in banca");
-        btnDeposita.setBackground(Color.WHITE);
-        btnDeposita.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                btnDeposita.setBackground(new Color(239, 239, 239)); // Blu più chiaro
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                btnDeposita.setBackground(Color.WHITE); // Torna al colore originale
-            }
-        });
-        JButton btnPreleva = new JButton("Prelevare soldi dalla banca");
-        btnPreleva.setBackground(Color.WHITE);
-        btnPreleva.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                btnPreleva.setBackground(new Color(239, 239, 239)); // Blu più chiaro
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                btnPreleva.setBackground(Color.WHITE); // Torna al colore originale
-            }
-        });
-        JButton btnInvesti = new JButton("Aggiungere un investimento");
-        btnInvesti.setBackground(Color.WHITE);
-        btnInvesti.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                btnInvesti.setBackground(new Color(239, 239, 239)); // Blu più chiaro
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                btnInvesti.setBackground(Color.WHITE); // Torna al colore originale
-            }
-        });
-        JButton btnStato = new JButton("Stato conto e investimenti");
-        btnStato.setBackground(Color.WHITE);
-        btnStato.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                btnStato.setBackground(new Color(239, 239, 239)); // Blu più chiaro
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                btnStato.setBackground(Color.WHITE); // Torna al colore originale
-            }
-        });
-        JButton btnEsci = new JButton("Esci");
-        btnEsci.setBackground(Color.WHITE);
-        btnEsci.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                btnEsci.setBackground(new Color(239, 239, 239)); // Blu più chiaro
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                btnEsci.setBackground(Color.WHITE); // Torna al colore originale
-            }
-        });
-
-        btnEsci.addActionListener(e -> frame.dispose());
-
-        panel.add(btnAvanzaMese);
-        panel.add(btnDeposita);
-        panel.add(btnPreleva);
-        panel.add(btnInvesti);
-        panel.add(btnStato);
-        panel.add(btnEsci);
-
-        return panel;
-    }
+    private JTextArea textArea;
+    private Utente utente;
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(Gui::new);
+        EventQueue.invokeLater(() -> {
+            try {
+                Gui window = new Gui();
+                window.frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public Gui() {
+        initialize();
+    }
+
+    private void initialize() {
+        frame = new JFrame();
+        frame.setBounds(100, 100, 600, 400);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().setLayout(new BorderLayout());
+
+        // Text area to display information
+        textArea = new JTextArea();
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
+
+        // Panel for Buttons (Login and Register)
+        JPanel panel = new JPanel();
+        frame.getContentPane().add(panel, BorderLayout.SOUTH);
+        panel.setLayout(new FlowLayout());
+
+        // Accesso/Registrazione buttons
+        JButton btnLogin = new JButton("Login");
+        JButton btnRegister = new JButton("Register");
+        panel.add(btnLogin);
+        panel.add(btnRegister);
+
+        btnLogin.addActionListener(e -> login());
+        btnRegister.addActionListener(e -> register());
+
+        // Button for investing
+        JButton btnInvest = new JButton("Investimenti");
+        btnInvest.setEnabled(false); // Will be enabled after login
+        panel.add(btnInvest);
+
+        btnInvest.addActionListener(e -> invest());
+
+        // This section simulates logged-in user's options (Deposita, Preleva, etc.)
+        JPanel menuPanel = new JPanel();
+        JButton btnDeposit = new JButton("Deposita");
+        JButton btnWithdraw = new JButton("Preleva");
+        JButton btnShowStatus = new JButton("Stato conto");
+        JButton btnViewTransactions = new JButton("Vedi Transazioni");
+        JButton btnAdvanceMonth = new JButton("Avanzare di un mese");
+        JButton btnLogout = new JButton("Logout");
+        panel.add(btnLogout);  // Aggiungi il pulsante al pannello
+
+        btnLogout.addActionListener(e -> logout());
+
+        menuPanel.add(btnDeposit);
+        menuPanel.add(btnWithdraw);
+        menuPanel.add(btnShowStatus);
+        menuPanel.add(btnViewTransactions);
+        menuPanel.add(btnAdvanceMonth);
+        panel.add(btnLogout);  // Aggiungi il pulsante al pannello
+
+
+
+        frame.getContentPane().add(menuPanel, BorderLayout.NORTH);
+
+        // Actions for these buttons after logging in
+        btnDeposit.addActionListener(e -> deposit());
+        btnWithdraw.addActionListener(e -> withdraw());
+        btnShowStatus.addActionListener(e -> showStatus());
+        btnViewTransactions.addActionListener(e -> viewTransactions());
+        btnAdvanceMonth.addActionListener(e -> advanceMonth());
+        btnLogout.addActionListener(e -> logout());
+
+        // All menu buttons are initially disabled
+        menuPanel.setVisible(false);
+
+        // Store reference for dynamic enabling/disabling after login
+        this.textArea.setText("Benvenuto nel sistema di gestione banca.");
+    }
+
+    private void login() {
+        String username = JOptionPane.showInputDialog(frame, "Inserisci nome utente:");
+        String password = JOptionPane.showInputDialog(frame, "Inserisci la tua password:");
+
+        if (GestoreFile.verificaLogin(username, password)) {
+            utente = GestoreFile.recuperaUtente(username);
+            textArea.setText("Login riuscito! Benvenuto " + username);
+
+            // Abilita i pulsanti del menu
+            enableUserOptions(true);
+
+            // Abilita il pulsante Investimenti
+            ((JButton) ((JPanel) frame.getContentPane().getComponent(1)).getComponent(2)).setEnabled(true); // Abilita il pulsante Investimenti
+        } else {
+            textArea.setText("Login fallito! Verifica il nome utente o la password.");
+        }
+    }
+
+    private void register() {
+        String username = JOptionPane.showInputDialog(frame, "Inserisci un nuovo nome utente:");
+        String password = JOptionPane.showInputDialog(frame, "Inserisci una nuova password:");
+
+        if (GestoreFile.verificaLogin(username, password)) {
+            textArea.setText("L'utente esiste già.");
+        } else {
+            utente = new Utente(username, password, 1, new Portafoglio(100.0), new ContoBancario(0.0), new ArrayList<>());
+            GestoreFile.salvaNuovoUtente(utente);
+            textArea.setText("Registrazione completata! Benvenuto " + username);
+        }
+    }
+
+    private void invest() {
+        // Show dialog for investment details
+            // Mostra la finestra di dialogo per i dettagli dell'investimento
+            String durata = JOptionPane.showInputDialog(frame, "Scegli durata (Basso, Medio, Alto):");
+            String rischio = JOptionPane.showInputDialog(frame, "Scegli rischio (Basso, Medio, Alto):");
+
+            // Verifica che durata e rischio siano stati inseriti
+            if (durata == null || durata.trim().isEmpty() || rischio == null || rischio.trim().isEmpty()) {
+                textArea.setText("Errore: Devi inserire sia la durata che il rischio dell'investimento.");
+                return; // Termina la funzione in caso di errore
+            }
+
+            // Gestione dell'importo dell'investimento
+            double importo = 0;
+            try {
+                importo = Double.parseDouble(JOptionPane.showInputDialog(frame, "Quanto vuoi investire?"));
+            } catch (NumberFormatException e) {
+                textArea.setText("Importo non valido.");
+                return; // Esci dalla funzione se l'importo non è valido
+            }
+
+            // Procedi con l'aggiunta dell'investimento
+            if (utente.aggiungiInvestimento(importo, durata, rischio, 6, utente)) {
+                textArea.setText("Investimento di " + importo + "€ aggiunto con durata " + durata + " e rischio " + rischio);
+                GestoreFile.salvaAggiornamenti(utente);
+            } else {
+                textArea.setText("Investimento non riuscito.");
+            }
+        }
+
+
+
+    private void deposit() {
+        double amount = Double.parseDouble(JOptionPane.showInputDialog(frame, "Quanto vuoi depositare?"));
+        if (utente.getPortafoglio().prelevaDenaro(amount)) {
+            utente.getContoBancario().deposita(amount);
+            textArea.setText("Depositato " + amount + "€.");
+            GestoreFile.salvaAggiornamenti(utente);
+        } else {
+            textArea.setText("Soldi insufficienti nel portafoglio.");
+        }
+    }
+
+    private void withdraw() {
+        double amount = Double.parseDouble(JOptionPane.showInputDialog(frame, "Quanto vuoi prelevare?"));
+        if (utente.getContoBancario().preleva(amount)) {
+            utente.getPortafoglio().aggiungiDenaro(amount);
+            textArea.setText("Prelevato " + amount + "€.");
+            GestoreFile.salvaAggiornamenti(utente);
+        } else {
+            textArea.setText("Soldi insufficienti nel conto bancario.");
+        }
+    }
+
+    private void showStatus() {
+        String status = "Stato attuale del conto:\n";
+        status += "Portafoglio: " + utente.getPortafoglio().getSaldo() + "€\n";
+        status += "Conto Bancario: " + utente.getContoBancario().getSaldo() + "€\n";
+        status += "Investimenti: \n";
+        for (Investimento investimento : utente.getInvestimenti()) {
+            status += investimento.toString() + "\n";
+        }
+        textArea.setText(status);
+    }
+
+    private void viewTransactions() {
+        GestoreFile.stampaTransazioni(utente);
+    }
+
+    private void advanceMonth() {
+        if (utente.avanzareMese(utente)) {
+            textArea.setText("Mese avanzato! Investimenti completati.");
+        } else {
+            textArea.setText("Avanzamento mese non riuscito.");
+        }
+        GestoreFile.salvaAggiornamenti(utente);
+    }
+
+    private void logout() {
+        System.exit(0);
+    }
+
+    private void enableUserOptions(boolean enabled) {
+        frame.getContentPane().getComponent(1).setVisible(enabled);  // Menu panel
+        frame.getContentPane().getComponent(2).setVisible(enabled);  // Text area
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

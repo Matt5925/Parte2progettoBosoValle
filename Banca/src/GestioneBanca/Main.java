@@ -63,10 +63,16 @@ do{
 			String userName=scanner.next();
 			System.out.print("\nInserisci Password: ");
 			String password=scanner.next();
-			accessoRiuscito=true;
 
-			utente=new Utente(userName,password,1, new Portafoglio(100.0),new ContoBancario(0.0), new ArrayList<Investimento>());
-			GestoreFile.salvaNuovoUtente(utente);
+			if (GestoreFile.verificaLogin(userName, password)){
+				System.out.print("\nL'utente esiste gia'!\n");
+			}else{
+				accessoRiuscito=true;
+
+				utente=new Utente(userName,password,1, new Portafoglio(100.0),new ContoBancario(0.0), new ArrayList<Investimento>());
+				GestoreFile.salvaNuovoUtente(utente);
+			}
+
 
 
 			break;

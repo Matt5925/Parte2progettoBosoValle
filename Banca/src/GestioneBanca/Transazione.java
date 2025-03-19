@@ -12,7 +12,6 @@ public class Transazione {
         this.importo=importo;
     }
 
-
     public String toString (){
         String s="";
         s+=this.mittente;
