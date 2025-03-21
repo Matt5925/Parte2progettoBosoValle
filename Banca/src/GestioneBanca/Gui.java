@@ -1,229 +1,508 @@
-package GestioneBanca;
 
+package GestioneBanca;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+public class Gui {
 
-public class Gui extends JFrame {
-    private JFrame frame;
-    private JTextArea textArea;
-    private Utente utente;
+    private static JFrame frame;
+    private static CardLayout cardLayout;
+    private static JPanel cardPanel;
+    private static Utente utente;
+    private static JLabel accountStatusLabel;  // Etichetta per lo stato dell'account
+    private static JTextArea investmentsDetailsArea;  // Area di testo per mostrare i dettagli degli investimenti
 
     public static void main(String[] args) {
-        EventQueue.invokeLater(() -> {
-            try {
-                Gui window = new Gui();
-                window.frame.setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        // Avvio della GUI
+        SwingUtilities.invokeLater(() -> {
+            createAndShowGUI();
         });
     }
 
-    public Gui() {
-        initialize();
-    }
-
-    private void initialize() {
-        frame = new JFrame();
-        frame.setBounds(100, 100, 600, 400);
+    private static void createAndShowGUI() {
+        frame = new JFrame("Gestione Banca");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setLayout(new BorderLayout());
+        frame.setSize(500, 400);
 
-        // Text area to display information
-        textArea = new JTextArea();
-        textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
+        // CardLayout per gestire la navigazione tra le schermate
+        cardLayout = new CardLayout();
+        cardPanel = new JPanel(cardLayout);
 
-        // Panel for Buttons (Login and Register)
+        // Aggiungi il pannello di login
+        cardPanel.add(createLoginPanel(), "Login");
+
+        // Aggiungi il pannello di registrazione
+        cardPanel.add(createRegistrationPanel(), "Registration");
+
+        // Aggiungi il pannello principale dopo il login
+        cardPanel.add(createMainMenuPanel(), "MainMenu");
+
+        frame.getContentPane().add(cardPanel);
+        frame.setVisible(true);
+    }
+
+    // Pannello di login
+    private static JPanel createLoginPanel() {
         JPanel panel = new JPanel();
-        frame.getContentPane().add(panel, BorderLayout.SOUTH);
-        panel.setLayout(new FlowLayout());
+        panel.setLayout(new GridLayout(3, 2));
 
-        // Accesso/Registrazione buttons
-        JButton btnLogin = new JButton("Login");
-        JButton btnRegister = new JButton("Register");
-        panel.add(btnLogin);
-        panel.add(btnRegister);
+        JLabel labelUsername = new JLabel("Username:");
+        JTextField usernameField = new JTextField();
+        JLabel labelPassword = new JLabel("Password:");
+        JPasswordField passwordField = new JPasswordField();
 
-        btnLogin.addActionListener(e -> login());
-        btnRegister.addActionListener(e -> register());
+        JButton loginButton = new JButton("Login");
+        JButton registerButton = new JButton("Registrati");
 
-        // Button for investing
-        JButton btnInvest = new JButton("Investimenti");
-        btnInvest.setEnabled(false); // Will be enabled after login
-        panel.add(btnInvest);
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = usernameField.getText();
+                String password = new String(passwordField.getPassword());
 
-        btnInvest.addActionListener(e -> invest());
-
-        // This section simulates logged-in user's options (Deposita, Preleva, etc.)
-        JPanel menuPanel = new JPanel();
-        JButton btnDeposit = new JButton("Deposita");
-        JButton btnWithdraw = new JButton("Preleva");
-        JButton btnShowStatus = new JButton("Stato conto");
-        JButton btnViewTransactions = new JButton("Vedi Transazioni");
-        JButton btnAdvanceMonth = new JButton("Avanzare di un mese");
-        JButton btnLogout = new JButton("Logout");
-        panel.add(btnLogout);  // Aggiungi il pulsante al pannello
-
-        btnLogout.addActionListener(e -> logout());
-
-        menuPanel.add(btnDeposit);
-        menuPanel.add(btnWithdraw);
-        menuPanel.add(btnShowStatus);
-        menuPanel.add(btnViewTransactions);
-        menuPanel.add(btnAdvanceMonth);
-        panel.add(btnLogout);  // Aggiungi il pulsante al pannello
-
-
-
-        frame.getContentPane().add(menuPanel, BorderLayout.NORTH);
-
-        // Actions for these buttons after logging in
-        btnDeposit.addActionListener(e -> deposit());
-        btnWithdraw.addActionListener(e -> withdraw());
-        btnShowStatus.addActionListener(e -> showStatus());
-        btnViewTransactions.addActionListener(e -> viewTransactions());
-        btnAdvanceMonth.addActionListener(e -> advanceMonth());
-        btnLogout.addActionListener(e -> logout());
-
-        // All menu buttons are initially disabled
-        menuPanel.setVisible(false);
-
-        // Store reference for dynamic enabling/disabling after login
-        this.textArea.setText("Benvenuto nel sistema di gestione banca.");
-    }
-
-    private void login() {
-        String username = JOptionPane.showInputDialog(frame, "Inserisci nome utente:");
-        String password = JOptionPane.showInputDialog(frame, "Inserisci la tua password:");
-
-        if (GestoreFile.verificaLogin(username, password)) {
-            utente = GestoreFile.recuperaUtente(username);
-            textArea.setText("Login riuscito! Benvenuto " + username);
-
-            // Abilita i pulsanti del menu
-            enableUserOptions(true);
-
-            // Abilita il pulsante Investimenti
-            ((JButton) ((JPanel) frame.getContentPane().getComponent(1)).getComponent(2)).setEnabled(true); // Abilita il pulsante Investimenti
-        } else {
-            textArea.setText("Login fallito! Verifica il nome utente o la password.");
-        }
-    }
-
-    private void register() {
-        String username = JOptionPane.showInputDialog(frame, "Inserisci un nuovo nome utente:");
-        String password = JOptionPane.showInputDialog(frame, "Inserisci una nuova password:");
-
-        if (GestoreFile.verificaLogin(username, password)) {
-            textArea.setText("L'utente esiste già.");
-        } else {
-            utente = new Utente(username, password, 1, new Portafoglio(100.0), new ContoBancario(0.0), new ArrayList<>());
-            GestoreFile.salvaNuovoUtente(utente);
-            textArea.setText("Registrazione completata! Benvenuto " + username);
-        }
-    }
-
-    private void invest() {
-        // Show dialog for investment details
-            // Mostra la finestra di dialogo per i dettagli dell'investimento
-            String durata = JOptionPane.showInputDialog(frame, "Scegli durata (Basso, Medio, Alto):");
-            String rischio = JOptionPane.showInputDialog(frame, "Scegli rischio (Basso, Medio, Alto):");
-
-            // Verifica che durata e rischio siano stati inseriti
-            if (durata == null || durata.trim().isEmpty() || rischio == null || rischio.trim().isEmpty()) {
-                textArea.setText("Errore: Devi inserire sia la durata che il rischio dell'investimento.");
-                return; // Termina la funzione in caso di errore
+                if (GestoreFile.verificaLogin(username, password)) {
+                    utente = GestoreFile.recuperaUtente(username);
+                    updateAccountStatus();  // Aggiorna lo stato dell'account
+                    updateInvestmentsDetails();  // Aggiorna la lista degli investimenti
+                    cardLayout.show(cardPanel, "MainMenu");
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Nome utente o password errati.");
+                }
             }
+        });
 
-            // Gestione dell'importo dell'investimento
-            double importo = 0;
-            try {
-                importo = Double.parseDouble(JOptionPane.showInputDialog(frame, "Quanto vuoi investire?"));
-            } catch (NumberFormatException e) {
-                textArea.setText("Importo non valido.");
-                return; // Esci dalla funzione se l'importo non è valido
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "Registration");
             }
+        });
 
-            // Procedi con l'aggiunta dell'investimento
-            if (utente.aggiungiInvestimento(importo, durata, rischio, 6, utente)) {
-                textArea.setText("Investimento di " + importo + "€ aggiunto con durata " + durata + " e rischio " + rischio);
+        panel.add(labelUsername);
+        panel.add(usernameField);
+        panel.add(labelPassword);
+        panel.add(passwordField);
+        panel.add(loginButton);
+        panel.add(registerButton);
+
+        return panel;
+    }
+
+    // Pannello di registrazione
+    private static JPanel createRegistrationPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(3, 2));
+
+        JLabel labelUsername = new JLabel("Username:");
+        JTextField usernameField = new JTextField();
+        JLabel labelPassword = new JLabel("Password:");
+        JPasswordField passwordField = new JPasswordField();
+
+        JButton registerButton = new JButton("Registrati");
+
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = usernameField.getText();
+                String password = new String(passwordField.getPassword());
+
+                if (GestoreFile.verificaLogin(username, password)) {
+                    JOptionPane.showMessageDialog(frame, "L'utente esiste già!");
+                } else {
+                    utente = new Utente(username, password, 1, new Portafoglio(100.0), new ContoBancario(0.0), new ArrayList<>());
+                    GestoreFile.salvaNuovoUtente(utente);
+                    updateAccountStatus();  // Aggiorna lo stato dell'account
+                    updateInvestmentsDetails();  // Aggiorna la lista degli investimenti
+                    cardLayout.show(cardPanel, "MainMenu");
+                }
+            }
+        });
+
+        panel.add(labelUsername);
+        panel.add(usernameField);
+        panel.add(labelPassword);
+        panel.add(passwordField);
+        panel.add(registerButton);
+
+        return panel;
+    }
+
+    // Pannello principale dopo il login
+    private static JPanel createMainMenuPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+
+        // Creazione del pannello per lo stato dell'account
+        accountStatusLabel = new JLabel();
+        accountStatusLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        accountStatusLabel.setForeground(Color.BLACK);
+        accountStatusLabel.setHorizontalAlignment(JLabel.CENTER);
+        updateAccountStatus();  // Inizializza lo stato dell'account
+        panel.add(accountStatusLabel, BorderLayout.NORTH);
+
+        // Pannello per i dettagli degli investimenti
+        investmentsDetailsArea = new JTextArea();
+        investmentsDetailsArea.setEditable(false);
+        investmentsDetailsArea.setFont(new Font("Arial", Font.PLAIN, 12));
+        JScrollPane scrollPane = new JScrollPane(investmentsDetailsArea);
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(5, 1)); // Ridotto a 5 pulsanti
+
+        JButton btnAvanzareMese = new JButton("Avanzare di un mese");
+        JButton btnDepositare = new JButton("Depositare soldi in banca");
+        JButton btnPrelevare = new JButton("Prelevare soldi dalla banca");
+        JButton btnInvestire = new JButton("Aggiungere un nuovo investimento");
+        JButton btnTransazioni = new JButton("Vedi Transazioni");
+
+        btnAvanzareMese.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (utente.avanzareMese(utente)) {
+                    JOptionPane.showMessageDialog(frame, "Investimenti completati.");
+                }
                 GestoreFile.salvaAggiornamenti(utente);
-            } else {
-                textArea.setText("Investimento non riuscito.");
+                updateAccountStatus();  // Aggiorna lo stato dell'account
+                updateInvestmentsDetails();  // Aggiorna la lista degli investimenti
             }
+        });
+
+        btnDepositare.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                double amount = Double.parseDouble(JOptionPane.showInputDialog("Quanto vuoi depositare?"));
+                if (utente.getPortafoglio().prelevaDenaro(amount)) {
+                    utente.getContoBancario().deposita(amount);
+                    GestoreFile.salvaAggiornamenti(utente);
+                    updateAccountStatus();  // Aggiorna lo stato dell'account
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Soldi insufficienti nel portafoglio.");
+                }
+            }
+        });
+
+        btnPrelevare.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                double amount = Double.parseDouble(JOptionPane.showInputDialog("Quanto vuoi prelevare?"));
+                if (utente.getContoBancario().preleva(amount)) {
+                    utente.getPortafoglio().aggiungiDenaro(amount);
+                    GestoreFile.salvaAggiornamenti(utente);
+                    updateAccountStatus();  // Aggiorna lo stato dell'account
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Soldi insufficienti nel conto bancario.");
+                }
+            }
+        });
+
+        btnInvestire.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+               /* String durata = JOptionPane.showInputDialog("Scegli durata (Basso, Medio, Alto):");
+                String rischio = JOptionPane.showInputDialog("Scegli rischio (Basso, Medio, Alto):");
+                double amount = Double.parseDouble(JOptionPane.showInputDialog("Quanto vuoi investire?"));
+
+                if (utente.aggiungiInvestimento(amount, durata, rischio, 6, utente)) {
+                    JOptionPane.showMessageDialog(frame, "Investimento aggiunto.");
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Non è possibile aggiungere l'investimento.");
+                }
+                GestoreFile.salvaAggiornamenti(utente);
+                updateAccountStatus();  // Aggiorna lo stato dell'account
+                updateInvestmentsDetails();  // Aggiorna la lista degli investimenti*/
+            }
+        });
+
+        btnTransazioni.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GestoreFile.stampaTransazioni(utente);
+            }
+        });
+
+        buttonPanel.add(btnAvanzareMese);
+        buttonPanel.add(btnDepositare);
+        buttonPanel.add(btnPrelevare);
+        buttonPanel.add(btnInvestire);
+        buttonPanel.add(btnTransazioni);
+
+        panel.add(buttonPanel, BorderLayout.EAST);
+
+        return panel;
+    }
+
+    // Metodo per aggiornare la JLabel con lo stato dell'account
+    private static void updateAccountStatus() {
+        if (utente != null) {
+            String stato = "<html><b>Conto Bancario:</b> " + utente.getContoBancario().getSaldo() +
+                    " €<br><b>Portafoglio:</b> " + utente.getPortafoglio().getSaldo() +
+                    " €<br><b>Investimenti:</b> " + utente.getInvestimenti().size() + " attivi.</html>";
+            accountStatusLabel.setText(stato);
         }
+    }
 
-
-
-    private void deposit() {
-        double amount = Double.parseDouble(JOptionPane.showInputDialog(frame, "Quanto vuoi depositare?"));
-        if (utente.getPortafoglio().prelevaDenaro(amount)) {
-            utente.getContoBancario().deposita(amount);
-            textArea.setText("Depositato " + amount + "€.");
-            GestoreFile.salvaAggiornamenti(utente);
+    // Metodo per aggiornare la sezione degli investimenti
+    private static void updateInvestmentsDetails() {
+        if (utente != null && !utente.getInvestimenti().isEmpty()) {
+            StringBuilder investmentsText = new StringBuilder();
+            for (Investimento investimento : utente.getInvestimenti()) {
+                investmentsText.append("Investimento: ").append(investimento.getImporto()).append(" €\n");
+                investmentsText.append("Durata: ").append(investimento.getDurata()).append("\n");
+                investmentsText.append("Rischio: ").append(investimento.getRischio()).append("\n\n");
+            }
+            investmentsDetailsArea.setText(investmentsText.toString());
         } else {
-            textArea.setText("Soldi insufficienti nel portafoglio.");
+            investmentsDetailsArea.setText("Non ci sono investimenti attivi.");
         }
-    }
-
-    private void withdraw() {
-        double amount = Double.parseDouble(JOptionPane.showInputDialog(frame, "Quanto vuoi prelevare?"));
-        if (utente.getContoBancario().preleva(amount)) {
-            utente.getPortafoglio().aggiungiDenaro(amount);
-            textArea.setText("Prelevato " + amount + "€.");
-            GestoreFile.salvaAggiornamenti(utente);
-        } else {
-            textArea.setText("Soldi insufficienti nel conto bancario.");
-        }
-    }
-
-    private void showStatus() {
-        String status = "Stato attuale del conto:\n";
-        status += "Portafoglio: " + utente.getPortafoglio().getSaldo() + "€\n";
-        status += "Conto Bancario: " + utente.getContoBancario().getSaldo() + "€\n";
-        status += "Investimenti: \n";
-        for (Investimento investimento : utente.getInvestimenti()) {
-            status += investimento.toString() + "\n";
-        }
-        textArea.setText(status);
-    }
-
-    private void viewTransactions() {
-        GestoreFile.stampaTransazioni(utente);
-    }
-
-    private void advanceMonth() {
-        if (utente.avanzareMese(utente)) {
-            textArea.setText("Mese avanzato! Investimenti completati.");
-        } else {
-            textArea.setText("Avanzamento mese non riuscito.");
-        }
-        GestoreFile.salvaAggiornamenti(utente);
-    }
-
-    private void logout() {
-        System.exit(0);
-    }
-
-    private void enableUserOptions(boolean enabled) {
-        frame.getContentPane().getComponent(1).setVisible(enabled);  // Menu panel
-        frame.getContentPane().getComponent(2).setVisible(enabled);  // Text area
     }
 }
 
 
 
+/*
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+public class Gui {
 
+    private static JFrame frame;
+    private static CardLayout cardLayout;
+    private static JPanel cardPanel;
+    private static Utente utente;
+    private static JLabel accountStatusLabel;  // Etichetta per lo stato dell'account
 
+    public static void main(String[] args) {
+        // Avvio della GUI
+        SwingUtilities.invokeLater(() -> {
+            createAndShowGUI();
+        });
+    }
 
+    private static void createAndShowGUI() {
+        frame = new JFrame("Gestione Banca");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
 
+        // CardLayout per gestire la navigazione tra le schermate
+        cardLayout = new CardLayout();
+        cardPanel = new JPanel(cardLayout);
 
+        // Aggiungi il pannello di login
+        cardPanel.add(createLoginPanel(), "Login");
 
+        // Aggiungi il pannello di registrazione
+        cardPanel.add(createRegistrationPanel(), "Registration");
 
+        // Aggiungi il pannello principale dopo il login
+        cardPanel.add(createMainMenuPanel(), "MainMenu");
 
+        frame.getContentPane().add(cardPanel);
+        frame.setVisible(true);
+    }
 
+    // Pannello di login
+    private static JPanel createLoginPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(3, 2));
 
+        JLabel labelUsername = new JLabel("Username:");
+        JTextField usernameField = new JTextField();
+        JLabel labelPassword = new JLabel("Password:");
+        JPasswordField passwordField = new JPasswordField();
+
+        JButton loginButton = new JButton("Login");
+        JButton registerButton = new JButton("Registrati");
+
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = usernameField.getText();
+                String password = new String(passwordField.getPassword());
+
+                if (GestoreFile.verificaLogin(username, password)) {
+                    utente = GestoreFile.recuperaUtente(username);
+                    updateAccountStatus();  // Aggiorna lo stato dell'account
+                    cardLayout.show(cardPanel, "MainMenu");
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Nome utente o password errati.");
+                }
+            }
+        });
+
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "Registration");
+            }
+        });
+
+        panel.add(labelUsername);
+        panel.add(usernameField);
+        panel.add(labelPassword);
+        panel.add(passwordField);
+        panel.add(loginButton);
+        panel.add(registerButton);
+
+        return panel;
+    }
+
+    // Pannello di registrazione
+    private static JPanel createRegistrationPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(3, 2));
+
+        JLabel labelUsername = new JLabel("Username:");
+        JTextField usernameField = new JTextField();
+        JLabel labelPassword = new JLabel("Password:");
+        JPasswordField passwordField = new JPasswordField();
+
+        JButton registerButton = new JButton("Registrati");
+
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = usernameField.getText();
+                String password = new String(passwordField.getPassword());
+
+                if (GestoreFile.verificaLogin(username, password)) {
+                    JOptionPane.showMessageDialog(frame, "L'utente esiste già!");
+                } else {
+                    utente = new Utente(username, password, 1, new Portafoglio(100.0), new ContoBancario(0.0), new ArrayList<>());
+                    GestoreFile.salvaNuovoUtente(utente);
+                    updateAccountStatus();  // Aggiorna lo stato dell'account
+                    cardLayout.show(cardPanel, "MainMenu");
+                }
+            }
+        });
+
+        panel.add(labelUsername);
+        panel.add(usernameField);
+        panel.add(labelPassword);
+        panel.add(passwordField);
+        panel.add(registerButton);
+
+        return panel;
+    }
+
+    // Pannello principale dopo il login
+    private static JPanel createMainMenuPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+
+        // Creazione del pannello per lo stato dell'account
+        accountStatusLabel = new JLabel();
+        accountStatusLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        accountStatusLabel.setForeground(Color.BLACK);
+        accountStatusLabel.setHorizontalAlignment(JLabel.CENTER);
+        updateAccountStatus();  // Inizializza lo stato dell'account
+        panel.add(accountStatusLabel, BorderLayout.NORTH);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(6, 1));
+
+        JButton btnAvanzareMese = new JButton("Avanzare di un mese");
+        JButton btnDepositare = new JButton("Depositare soldi in banca");
+        JButton btnPrelevare = new JButton("Prelevare soldi dalla banca");
+        JButton btnInvestire = new JButton("Aggiungere un nuovo investimento");
+        JButton btnStatoConto = new JButton("Stato conto, portafoglio e investimenti");
+        JButton btnTransazioni = new JButton("Vedi Transazioni");
+
+        btnAvanzareMese.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (utente.avanzareMese(utente)) {
+                    JOptionPane.showMessageDialog(frame, "Investimenti completati.");
+                }
+                GestoreFile.salvaAggiornamenti(utente);
+                updateAccountStatus();  // Aggiorna lo stato dell'account
+            }
+        });
+
+        btnDepositare.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                double amount = Double.parseDouble(JOptionPane.showInputDialog("Quanto vuoi depositare?"));
+                if (utente.getPortafoglio().prelevaDenaro(amount)) {
+                    utente.getContoBancario().deposita(amount);
+                    GestoreFile.salvaAggiornamenti(utente);
+                    updateAccountStatus();  // Aggiorna lo stato dell'account
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Soldi insufficienti nel portafoglio.");
+                }
+            }
+        });
+
+        btnPrelevare.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                double amount = Double.parseDouble(JOptionPane.showInputDialog("Quanto vuoi prelevare?"));
+                if (utente.getContoBancario().preleva(amount)) {
+                    utente.getPortafoglio().aggiungiDenaro(amount);
+                    GestoreFile.salvaAggiornamenti(utente);
+                    updateAccountStatus();  // Aggiorna lo stato dell'account
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Soldi insufficienti nel conto bancario.");
+                }
+            }
+        });
+
+        btnInvestire.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String durata = JOptionPane.showInputDialog("Scegli durata (Basso, Medio, Alto):");
+                String rischio = JOptionPane.showInputDialog("Scegli rischio (Basso, Medio, Alto):");
+                double amount = Double.parseDouble(JOptionPane.showInputDialog("Quanto vuoi investire?"));
+
+                if (utente.aggiungiInvestimento(amount, durata, rischio, 6, utente)) {
+                    JOptionPane.showMessageDialog(frame, "Investimento aggiunto.");
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Non è possibile aggiungere l'investimento.");
+                }
+                GestoreFile.salvaAggiornamenti(utente);
+                updateAccountStatus();  // Aggiorna lo stato dell'account
+            }
+        });
+
+        btnStatoConto.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(frame, utente.getStato());
+            }
+        });
+
+        btnTransazioni.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GestoreFile.stampaTransazioni(utente);
+            }
+        });
+
+        buttonPanel.add(btnAvanzareMese);
+        buttonPanel.add(btnDepositare);
+        buttonPanel.add(btnPrelevare);
+        buttonPanel.add(btnInvestire);
+        buttonPanel.add(btnStatoConto);
+        buttonPanel.add(btnTransazioni);
+
+        panel.add(buttonPanel, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    // Metodo per aggiornare la JLabel con lo stato dell'account
+    private static void updateAccountStatus() {
+        if (utente != null) {
+            String stato = "<html><b>Conto Bancario:</b> " + utente.getContoBancario().getSaldo() +
+                    " €<br><b>Portafoglio:</b> " + utente.getPortafoglio().getSaldo() +
+                    " €<br><b>Investimenti:</b> " + utente.getInvestimenti().size() + " attivi.</html>";
+            accountStatusLabel.setText(stato);
+        }
+    }
+}
+*/
